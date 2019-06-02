@@ -1,0 +1,17 @@
+node {
+    stage("Checkout"){
+        checkout([$class: 'GitSCM', branches: [[name: env.BRANCH_NAME]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-id', url: env.REPO_URL]]])
+    }
+    stage("Workspace")
+    {
+ sh 'echo $JOB_NAME'
+     sh 'cp  $WORKSPACE/*.html /var/lib/jenkins/workspace/DownStream'
+    }
+    stage("List"){
+        sh 'ls -ltr'
+    }
+     stage('DownStream') 
+        {
+          build job: 'DownStream', parameters: [[$class: 'StringParameterValue', name: 'project', value: env.WORKSPACE]]
+     }
+}
